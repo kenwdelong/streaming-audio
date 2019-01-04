@@ -19,12 +19,15 @@ public class SdpExchangeController
 	@GetMapping("/tx")
 	public String getSdpForTx()
 	{
-		return rxSdp;
+		String sdp = rxSdp;
+		rxSdp = null;
+		return sdp;
 	}
 	
 	@PostMapping("/tx")
 	public String setTxSdp(@RequestBody String sdp)
 	{
+		System.out.println(sdp);
 		txSdp = sdp;
 		return "OK";
 	}
@@ -32,7 +35,9 @@ public class SdpExchangeController
 	@GetMapping("/rx")
 	public String getSdpForRx()
 	{
-		return txSdp;
+		String sdp = txSdp;
+		txSdp = null;
+		return sdp;
 	}
 	
 	@PostMapping("/rx")

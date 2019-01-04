@@ -30,6 +30,7 @@ import org.jitsi.service.neomedia.MediaUseCase;
 import org.jitsi.service.neomedia.StreamConnector;
 import org.jitsi.service.neomedia.device.MediaDevice;
 import org.jitsi.service.neomedia.format.MediaFormat;
+import org.jitsi.util.Logger;
 
 import com.hatchbaby.streaming.model.ClientType;
 
@@ -42,6 +43,8 @@ import com.hatchbaby.streaming.model.ClientType;
  */
 public class Transceiver
 {
+	private final Logger logger = Logger.getLogger(getClass());
+	
 	/**
 	 * The port which is the source of the transmission i.e. from which the
 	 * media is to be transmitted.
@@ -109,6 +112,7 @@ public class Transceiver
         
 		int localRTPPort = localPortBase;
 		int localRTCPPort = localRTPPort + 1;
+		logger.info("Creating stream on ports " + localRTPPort + " and " + localRTCPPort);
 		StreamConnector connector = new DefaultStreamConnector(new DatagramSocket(localRTPPort), new DatagramSocket(localRTCPPort));
 		mediaStream.setConnector(connector);
 

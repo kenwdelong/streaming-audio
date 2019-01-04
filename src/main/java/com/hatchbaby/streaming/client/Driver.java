@@ -26,18 +26,26 @@ public class Driver
 	
 	private Transceiver transceiver;
 
-	public static void main(String[] args) throws Exception
+	public static void main(String[] args)
 	{
-		CommandLine cmd = parseCommandLine(args);
-		String host = cmd.getOptionValue("h");
-		ClientType clientType = ClientType.valueOf(cmd.getOptionValue("t"));
-		int port = Integer.parseInt(cmd.getOptionValue("p"));
+		try
+		{
+			CommandLine cmd = parseCommandLine(args);
+			String host = "http://" + cmd.getOptionValue("h");
+			ClientType clientType = ClientType.valueOf(cmd.getOptionValue("t"));
+			int port = Integer.parseInt(cmd.getOptionValue("p"));
 
-		Driver driver = new Driver(host, clientType, port);
-		driver.start();
-		Thread.sleep(60_000);
-		driver.stop();
-		System.exit(0);
+			Driver driver = new Driver(host, clientType, port);
+			driver.start();
+			Thread.sleep(60_000);
+			driver.stop();
+			System.exit(0);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			System.exit(-1);
+		}
 	}
 	
 	public Driver(String sdpExchangeHost, ClientType clientType, int port)
@@ -53,14 +61,35 @@ public class Driver
 		IceClient iceClient = new IceClient();
 		Observable<CandidatePair> iceResult = iceClient.startIceDancing(port, sdpExchangeHost, clientType);
 		iceResult.map(pair -> createTransceiver(pair, clientType))
+			.flatMap(t -> startTransceiver(t))
 			.subscribe(t -> this.transceiver = t,
-					   e -> e.printStackTrace());
-		transceiver.start();
+					   e -> 
+					   {
+						   e.printStackTrace();
+						   stop();
+					   }
+			);
+	}
+	
+	private Observable<Transceiver> startTransceiver(Transceiver transceiver)
+	{
+		try
+		{
+			transceiver.start();
+			return Observable.just(transceiver);
+		}
+		catch(Exception e)
+		{
+			return Observable.error(e);
+		}
 	}
 	
 	public void stop()
 	{
-		transceiver.stop();
+		if(transceiver != null)
+		{
+			transceiver.stop();
+		}
 		LibJitsi.stop();
 	}
 	

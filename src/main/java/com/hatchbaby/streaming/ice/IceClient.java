@@ -10,7 +10,6 @@ import java.net.URL;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.sdp.Attribute;
 import javax.sdp.Connection;
 import javax.sdp.MediaDescription;
@@ -29,6 +28,7 @@ import org.ice4j.ice.RemoteCandidate;
 import org.ice4j.ice.harvest.StunCandidateHarvester;
 import org.ice4j.ice.sdp.CandidateAttribute;
 import org.ice4j.ice.sdp.IceSdpUtils;
+import org.jitsi.util.Logger;
 import org.opentelecoms.javax.sdp.NistSdpFactory;
 
 import com.hatchbaby.streaming.model.ClientType;
@@ -37,6 +37,8 @@ import rx.Observable;
 
 public class IceClient
 {
+	private final Logger logger = Logger.getLogger(getClass());
+
 	public Observable<CandidatePair> startIceDancing(int port, String sdpExchangeUrl, ClientType clientType) throws Exception
 	{
 		Agent agent = new Agent();
@@ -221,7 +223,11 @@ public class IceClient
 	{
 		String url = sdpExchangeUrl + clientType.getUri();
 		URL obj = new URL(url);
-		HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+		logger.info("Posting to [" + url + "]");
+		logger.info("Sending this SDP");
+		logger.info(toSend);
+		// in real life, this should be HTTPS, but let's not worry about SSL certs etc.
+		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
 		//add reuqest header
 		con.setRequestMethod("POST");
@@ -256,6 +262,8 @@ public class IceClient
 			Thread.sleep(1000);
 			sdp = do_fetchSdp(sdpExchangeUrl, clientType);
 		}
+		logger.info("Got this SDP:");
+		logger.info(sdp);
 		return sdp;
 	}
 	
@@ -273,7 +281,7 @@ public class IceClient
 
 		while ((inputLine = in.readLine()) != null) 
 		{
-			response.append(inputLine);
+			response.append(inputLine).append("\n");
 		}
 		in.close();
 
