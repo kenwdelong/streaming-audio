@@ -110,13 +110,15 @@ public class Transceiver
         MediaFormat format = mediaService.getFormatFactory().createMediaFormat(encoding, clockRate);
         mediaStream.setFormat(format);
         
-		int localRTPPort = localPortBase;
+		int localRTPPort = localPortBase + 1;
 		int localRTCPPort = localRTPPort + 1;
 		logger.info("Creating stream on ports " + localRTPPort + " and " + localRTCPPort);
-		StreamConnector connector = new DefaultStreamConnector(new DatagramSocket(localRTPPort), new DatagramSocket(localRTCPPort));
+		DatagramSocket rtpSocket = new DatagramSocket(localRTPPort);
+		DatagramSocket rtcpSocket = new DatagramSocket(localRTCPPort);
+		StreamConnector connector = new DefaultStreamConnector(rtpSocket, rtcpSocket);
 		mediaStream.setConnector(connector);
 
-		int remoteRTPPort = remotePortBase;
+		int remoteRTPPort = remotePortBase + 1;
 		int remoteRTCPPort = remoteRTPPort + 1;
 
 		InetSocketAddress rtpTarget = new InetSocketAddress(remoteAddr, remoteRTPPort);
