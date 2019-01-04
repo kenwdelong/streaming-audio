@@ -83,7 +83,7 @@ public class Transceiver
 	 * @throws UnknownHostException 
 	 *             
 	 */
-	private Transceiver(int localPortBase, String remoteHost, int remotePortBase, ClientType clientType) throws UnknownHostException
+	public Transceiver(int localPortBase, String remoteHost, int remotePortBase, ClientType clientType) throws UnknownHostException
 	{
 		this.localPortBase = localPortBase;
 		this.remoteAddr = InetAddress.getByName(remoteHost);
@@ -150,4 +150,23 @@ public class Transceiver
 		mediaStream = null;
 	}
 
+	public static void main(String[] args) throws Exception
+	{
+		LibJitsi.start();
+		
+		// local test
+		Transceiver tx = new Transceiver(5100, "localhost", 5200, ClientType.Tx);
+		Transceiver rx = new Transceiver(5200, "localhost", 5100, ClientType.Rx);
+		
+		tx.start();
+		rx.start();
+		
+		Thread.sleep(10_000);
+		
+		tx.stop();
+		rx.stop();
+		
+		LibJitsi.stop();
+		System.exit(0);
+	}
 }
