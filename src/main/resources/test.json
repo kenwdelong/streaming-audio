@@ -1,0 +1,10 @@
+{
+	"macAddress": "A1:B2:C3:D4:E5:F6",
+	"timestamp": 12345,
+	"source": "device",
+	"memberId": 6789,
+	"category": "onboarding",
+	"level": "INFO",
+	"name": "Found wifi",
+	"type": "Event"
+}

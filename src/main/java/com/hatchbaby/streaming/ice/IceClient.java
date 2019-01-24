@@ -25,9 +25,10 @@ import org.ice4j.ice.CandidateType;
 import org.ice4j.ice.Component;
 import org.ice4j.ice.IceMediaStream;
 import org.ice4j.ice.RemoteCandidate;
-import org.ice4j.ice.harvest.StunCandidateHarvester;
+import org.ice4j.ice.harvest.TurnCandidateHarvester;
 import org.ice4j.ice.sdp.CandidateAttribute;
 import org.ice4j.ice.sdp.IceSdpUtils;
+import org.ice4j.security.LongTermCredential;
 import org.jitsi.util.Logger;
 import org.opentelecoms.javax.sdp.NistSdpFactory;
 
@@ -39,7 +40,7 @@ public class IceClient
 {
 	private final Logger logger = Logger.getLogger(getClass());
 
-	public Observable<CandidatePair> startIceDancing(int port, String sdpExchangeUrl, ClientType clientType) throws Exception
+	public Observable<CandidatePair> startIceDancing(int port, String sdpExchangeUrl, ClientType clientType, LongTermCredential turnCreds) throws Exception
 	{
 		Agent agent = new Agent();
 
@@ -47,8 +48,13 @@ public class IceClient
 		for(String hostname : hostnames)
 		{
 			TransportAddress ta = new TransportAddress(InetAddress.getByName(hostname), 19302, Transport.UDP);
-			agent.addCandidateHarvester(new StunCandidateHarvester(ta));
+			//agent.addCandidateHarvester(new StunCandidateHarvester(ta));
+			agent.addCandidateHarvester(new StunHarvester(ta));
 		}
+		String turnHost = "global.turn.twilio.com";
+		TransportAddress ta = new TransportAddress(InetAddress.getByName(turnHost), 3478, Transport.UDP);
+		agent.addCandidateHarvester(new TurnCandidateHarvester(ta, turnCreds));
+		
 
 		IceMediaStream stream = agent.createMediaStream("audio");
 		agent.createComponent(stream, Transport.UDP, port, port, port + 100);

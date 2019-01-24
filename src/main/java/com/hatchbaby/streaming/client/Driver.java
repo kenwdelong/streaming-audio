@@ -10,6 +10,7 @@ import org.apache.commons.cli.ParseException;
 import org.ice4j.ice.CandidatePair;
 import org.ice4j.ice.LocalCandidate;
 import org.ice4j.ice.RemoteCandidate;
+import org.ice4j.security.LongTermCredential;
 import org.jitsi.service.libjitsi.LibJitsi;
 
 import com.hatchbaby.streaming.ice.IceClient;
@@ -23,6 +24,7 @@ public class Driver
 	private String sdpExchangeHost;
 	private ClientType clientType;
 	private int port;
+	private LongTermCredential turnCredentials;
 	
 	private Transceiver transceiver;
 
@@ -34,8 +36,12 @@ public class Driver
 			String host = "http://" + cmd.getOptionValue("h");
 			ClientType clientType = ClientType.valueOf(cmd.getOptionValue("t"));
 			int port = Integer.parseInt(cmd.getOptionValue("p"));
+			
+			String turnUser = cmd.getOptionValue("u");
+			String turnCredential = cmd.getOptionValue("c");
+			LongTermCredential turnCredentials = new LongTermCredential(turnUser, turnCredential);
 
-			Driver driver = new Driver(host, clientType, port);
+			Driver driver = new Driver(host, clientType, port, turnCredentials);
 			driver.start();
 			Thread.sleep(60_000);
 			driver.stop();
@@ -48,18 +54,19 @@ public class Driver
 		}
 	}
 	
-	public Driver(String sdpExchangeHost, ClientType clientType, int port)
+	public Driver(String sdpExchangeHost, ClientType clientType, int port, LongTermCredential turnCreds)
 	{
 		this.sdpExchangeHost = sdpExchangeHost;
 		this.clientType = clientType;
 		this.port = port;
+		this.turnCredentials = turnCreds;
 	}
 	
 	public void start() throws Exception
 	{
 		LibJitsi.start();
 		IceClient iceClient = new IceClient();
-		Observable<CandidatePair> iceResult = iceClient.startIceDancing(port, sdpExchangeHost, clientType);
+		Observable<CandidatePair> iceResult = iceClient.startIceDancing(port, sdpExchangeHost, clientType, turnCredentials);
 		iceResult.map(pair -> createTransceiver(pair, clientType))
 			.flatMap(t -> startTransceiver(t))
 			.subscribe(t -> this.transceiver = t,
@@ -118,6 +125,8 @@ public class Driver
 		options.addRequiredOption("h", "host", true, "name of SDP exchange host");
 		options.addRequiredOption("t", "type", true, "client type (Rx or Tx)");
 		options.addRequiredOption("p", "port", true, "Base port number");
+		options.addOption("u", "turnuser", true, "Turn user name");
+		options.addOption("c", "turncredential", true, "Turn password");
 		
 		CommandLineParser parser = new DefaultParser();
 		CommandLine cmd = parser.parse( options, args);

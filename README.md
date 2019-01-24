@@ -1,5 +1,5 @@
 # Streaming Audio Demo
-This project uses the jitsi project's [ICE4J](https://github.com/jitsi/ice4j) and [libjitsi](https://github.com/jitsi/libjitsi) libraries to stream audio between two endpoints, possibly separately by NAT firewalls. These projects don't have a lot of documentation or support, so I thought I'd put this out for folks who are trying to get started.
+This project uses the jitsi project's [ICE4J](https://github.com/jitsi/ice4j) and [libjitsi](https://github.com/jitsi/libjitsi) libraries to stream audio between two endpoints, possibly separately by NAT firewalls. These projects don't have a lot of documentation or support, so I thought I'd put this out for folks who are trying to get started. Also, the source reads vertically, like it was written on a cell phone. :-)
 
 The ICE code is based on the tutorial [here](http://www.stellarbuild.com/blog/article/ice4j-networking-tutorial-part-1). The libjitsi code is based on the `AvTransmit2` and `AvReceive2` classes in the libjitsi source code base. 
 
