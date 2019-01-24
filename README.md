@@ -22,4 +22,18 @@ The endpoints start by running the ICE protocol - basically generating a list of
 
 I have not made a big effort to figure out the threading model or proper exception handling. I used RxJava to handle the async callback from the completion of the ICE dance. If you were to adapt this for real use, you'd better think about those things a bit.
 
-The Jitsi projects use a homebrew logger that wraps JUL. The log format is truly horrific. Sorry about that.    
+The Jitsi projects use a homebrew logger that wraps JUL. The log format is truly horrific. Sorry about that.
+
+## The Servers
+In `IceClient` you can see the servers that I use. I'm using Google's public STUN servers, and a (not public) Twilio TURN server. The TURN credentials need to be passed in: `-u` is the username and `-c` are the credentials (password).
+
+### The Twilio TURN Server
+You need a little kung fu to use the Twilio TURN server.
+* Get a Twilio Account
+* Enable Programmable Chat (uses TURN)
+* Docs are [here](https://www.twilio.com/docs/stun-turn) and [here](https://www.twilio.com/docs/stun-turn/api)    
+* Get your Account SID and AuthToken [here](https://www.twilio.com/console/).
+* You need to convert your SID and AuthToken to a username and password [like this](https://stackoverflow.com/questions/40862574/how-to-directly-use-twilio-turn-server-for-android-server-client).
+    * `curl -XPOST https://api.twilio.com/2010-04-01/Accounts/YOUR_ACCOUNT_SID/Tokens.json -u "YOUR_ACCOUNT_SID:YOUR_AUTH_TOKEN`
+* In the JSON that comes back, take the username and password and pass it in to `Driver`.
+* You could easily adapt this code to pass in the hostnames of the TURN and STUN servers. Left as an exercise for the reader.
