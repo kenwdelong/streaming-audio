@@ -13,6 +13,7 @@ public class FfmpegTranceiver extends Transceiver
 	public FfmpegTranceiver(int localPortBase, String remoteHost, int remotePortBase, ClientType clientType) throws UnknownHostException
 	{
 		super(localPortBase, remoteHost, remotePortBase, clientType);
+		logger.info("Creating FfmpegTransceiver");
 	}
 
 	// This worked locally!

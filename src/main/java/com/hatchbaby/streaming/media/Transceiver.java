@@ -82,7 +82,7 @@ public abstract class Transceiver
 		}
 		else if(media == MediaServer.ffmpeg)
 		{
-			return null;
+			return new FfmpegTranceiver(localPortBase, remoteHost, remotePortBase, clientType);
 		}
 		else
 		{

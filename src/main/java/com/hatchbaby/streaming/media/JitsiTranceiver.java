@@ -59,6 +59,7 @@ public class JitsiTranceiver extends Transceiver
 	public JitsiTranceiver(int localPortBase, String remoteHost, int remotePortBase, ClientType clientType) throws UnknownHostException
 	{
 		super(localPortBase, remoteHost, remotePortBase, clientType);
+		logger.info("Creating JitsiTransceiver");
 	}
 
 	public void start() throws Exception
