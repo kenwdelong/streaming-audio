@@ -99,4 +99,21 @@ public abstract class Transceiver
 
 	public abstract void stop();
 
+	
+//	public static void main(String[] args) throws Exception
+//	{
+//		InetAddress addr = InetAddress.getByName("LAPTOP-7APPCSAE");
+//		System.out.println(addr);
+//		System.out.println(addr.getCanonicalHostName());
+//		System.out.println(addr.getHostAddress());
+//		System.out.println(addr.getHostName());
+//		
+//		// prints
+//		/*
+//			LAPTOP-7APPCSAE/192.168.1.16
+//			192.168.1.16
+//			192.168.1.16
+//			LAPTOP-7APPCSAE
+//		 */
+//	}
 }

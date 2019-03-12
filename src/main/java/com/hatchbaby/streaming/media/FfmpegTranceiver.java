@@ -42,7 +42,7 @@ public class FfmpegTranceiver extends Transceiver
 		try
 		{
 			// ffmpeg -re -i /tmp/Earl04.mp3 -f rtsp -allowed_media_types audio -v debug rtsp://127.0.0.1:50000/stream
-			String url = "rtsp://" + remoteAddr + ":" + remotePortBase + "/stream";
+			String url = "rtsp://" + remoteAddr.getHostAddress() + ":" + remotePortBase + "/stream";
 			logger.info("Transmitting on url [" + url + "]");
 			ProcessBuilder pb = new ProcessBuilder("cmd", "-c", "ffmpeg.exe", "-re", "/tmp/Eral04.mp3", "-f", "rtsp", "-allowed_media_types", "audio", url);
 			File file = new File("/Users/Ken/java/ffmpeg-4.1-win64-static/bin");
