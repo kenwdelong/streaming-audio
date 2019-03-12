@@ -25,7 +25,7 @@ import com.hatchbaby.streaming.model.MediaServer;
 
 public abstract class Transceiver
 {
-	protected final Logger logger = Logger.getLogger(getClass());
+	protected static final Logger logger = Logger.getLogger(getClass());
 	
 	/**
 	 * The port which is the source of the transmission i.e. from which the
@@ -76,6 +76,11 @@ public abstract class Transceiver
 	 */
 	public static Transceiver create(int localPortBase, String remoteHost, int remotePortBase, ClientType clientType, MediaServer media) throws UnknownHostException
 	{
+		logger.info("Local port base: " + localPortBase);
+		logger.info("Remote host: " + remoteHost);
+		logger.info("Remote port base: " + remotePortBase);
+		logger.info("Client type: " + clientType);
+		logger.info("Media server: " + media);
 		if(media == MediaServer.jistsi)
 		{
 			return new JitsiTranceiver(localPortBase, remoteHost, remotePortBase, clientType);
