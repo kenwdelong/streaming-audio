@@ -43,7 +43,8 @@ public class FfmpegTranceiver extends Transceiver
 		{
 			// ffmpeg -re -i /tmp/Earl04.mp3 -f rtsp -allowed_media_types audio -v debug rtsp://127.0.0.1:50000/stream
 			String url = "rtsp://" + remoteAddr + ":" + remotePortBase + "/stream";
-			ProcessBuilder pb = new ProcessBuilder("ffmpeg", "-re", "/tmp/Eral04.mp3", "-f", "rtsp", "-allowed_media_types", "audio", url);
+			logger.info("Transmitting on url [" + url + "]");
+			ProcessBuilder pb = new ProcessBuilder("ffmpeg.exe", "-re", "/tmp/Eral04.mp3", "-f", "rtsp", "-allowed_media_types", "audio", url);
 			File file = new File("/Users/Ken/java/ffmpeg-4.1-win64-static/bin");
 			pb.directory(file);
 			process = pb.start();
@@ -69,8 +70,9 @@ public class FfmpegTranceiver extends Transceiver
 		try
 		{
 			// ffplay -f rtsp -rtsp_flags listen -v debug rtsp://127.0.0.1:50000/stream
-			String url = "rtsp://127.0.0.1:" + localPortBase + "/stream"; 
-			ProcessBuilder pb = new ProcessBuilder("ffplay", "-f", "rtsp", "-rtsp_flags", "listen", url);
+			String url = "rtsp://127.0.0.1:" + localPortBase + "/stream";
+			logger.info("Receiving on url [" + url + "]");
+			ProcessBuilder pb = new ProcessBuilder("ffplay.exe", "-f", "rtsp", "-rtsp_flags", "listen", url);
 			File file = new File("/tmp/ffmpeg-20190312-d227ed5-win64-static/bin");
 			pb.directory(file);
 			process = pb.start();
