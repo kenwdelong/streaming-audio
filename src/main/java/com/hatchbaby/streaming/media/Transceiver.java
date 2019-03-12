@@ -21,6 +21,7 @@ import java.net.UnknownHostException;
 import org.jitsi.util.Logger;
 
 import com.hatchbaby.streaming.model.ClientType;
+import com.hatchbaby.streaming.model.MediaServer;
 
 public abstract class Transceiver
 {
@@ -52,6 +53,14 @@ public abstract class Transceiver
 	 */
 	protected int remotePortBase;
 
+	protected Transceiver(int localPortBase, String remoteHost, int remotePortBase, ClientType clientType) throws UnknownHostException
+	{
+		this.localPortBase = localPortBase;
+		this.remoteAddr = InetAddress.getByName(remoteHost);
+		this.remotePortBase = remotePortBase;
+		this.clientType = clientType;
+	}
+	
 	/**
 	 * @param localPortBase
 	 *            the port which is the source of the transmission i.e. from
@@ -65,10 +74,20 @@ public abstract class Transceiver
 	 * @throws UnknownHostException 
 	 *             
 	 */
-	public static Transceiver create(int localPortBase, String remoteHost, int remotePortBase, ClientType clientType) throws UnknownHostException
+	public static Transceiver create(int localPortBase, String remoteHost, int remotePortBase, ClientType clientType, MediaServer media) throws UnknownHostException
 	{
-		Transceiver t = new JitsiTranceiver(localPortBase, remoteHost, remotePortBase, clientType);
-		return t;
+		if(media == MediaServer.jistsi)
+		{
+			return new JitsiTranceiver(localPortBase, remoteHost, remotePortBase, clientType);
+		}
+		else if(media == MediaServer.ffmpeg)
+		{
+			return null;
+		}
+		else
+		{
+			throw new IllegalArgumentException("No media server for [" + media + "]");
+		}
 	}
 
 	public abstract void start() throws Exception;

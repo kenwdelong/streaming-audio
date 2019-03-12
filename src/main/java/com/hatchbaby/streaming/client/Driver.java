@@ -16,6 +16,7 @@ import org.jitsi.service.libjitsi.LibJitsi;
 import com.hatchbaby.streaming.ice.IceClient;
 import com.hatchbaby.streaming.media.Transceiver;
 import com.hatchbaby.streaming.model.ClientType;
+import com.hatchbaby.streaming.model.MediaServer;
 
 import rx.Observable;
 
@@ -25,6 +26,7 @@ public class Driver
 	private ClientType clientType;
 	private int port;
 	private LongTermCredential turnCredentials;
+	private MediaServer mediaServer;
 	
 	private Transceiver transceiver;
 
@@ -36,12 +38,13 @@ public class Driver
 			String host = "http://" + cmd.getOptionValue("h");
 			ClientType clientType = ClientType.valueOf(cmd.getOptionValue("t"));
 			int port = Integer.parseInt(cmd.getOptionValue("p"));
+			MediaServer mediaServer = MediaServer.valueOf(cmd.getOptionValue("m"));
 			
 			String turnUser = cmd.getOptionValue("u");
 			String turnCredential = cmd.getOptionValue("c");
 			LongTermCredential turnCredentials = new LongTermCredential(turnUser, turnCredential);
 
-			Driver driver = new Driver(host, clientType, port, turnCredentials);
+			Driver driver = new Driver(host, clientType, port, turnCredentials, mediaServer);
 			driver.start();
 			Thread.sleep(60_000);
 			driver.stop();
@@ -54,12 +57,13 @@ public class Driver
 		}
 	}
 	
-	public Driver(String sdpExchangeHost, ClientType clientType, int port, LongTermCredential turnCreds)
+	public Driver(String sdpExchangeHost, ClientType clientType, int port, LongTermCredential turnCreds, MediaServer mediaServer)
 	{
 		this.sdpExchangeHost = sdpExchangeHost;
 		this.clientType = clientType;
 		this.port = port;
 		this.turnCredentials = turnCreds;
+		this.mediaServer = mediaServer;
 	}
 	
 	public void start() throws Exception
@@ -67,7 +71,7 @@ public class Driver
 		LibJitsi.start();
 		IceClient iceClient = new IceClient();
 		Observable<CandidatePair> iceResult = iceClient.startIceDancing(port, sdpExchangeHost, clientType, turnCredentials);
-		iceResult.map(pair -> createTransceiver(pair, clientType))
+		iceResult.map(pair -> createTransceiver(pair, clientType, mediaServer))
 			.flatMap(t -> startTransceiver(t))
 			.subscribe(t -> this.transceiver = t,
 					   e -> 
@@ -100,7 +104,7 @@ public class Driver
 		LibJitsi.stop();
 	}
 	
-	private Transceiver createTransceiver(CandidatePair pair, ClientType clientType)
+	private Transceiver createTransceiver(CandidatePair pair, ClientType clientType, MediaServer mediaServer)
 	{
 		Transceiver transceiver = null;
 		try
@@ -110,7 +114,8 @@ public class Driver
 			transceiver = Transceiver.create(local.getTransportAddress().getPort(),
 													 remote.getTransportAddress().getAddress().getHostName(),
 													 remote.getTransportAddress().getPort(),
-													 clientType);
+													 clientType,
+													 mediaServer);
 		}
 		catch(UnknownHostException e)
 		{
@@ -123,8 +128,9 @@ public class Driver
 	{
 		Options options = new Options(); 
 		options.addRequiredOption("h", "host", true, "name of SDP exchange host");
-		options.addRequiredOption("t", "type", true, "client type (Rx or Tx)");
+		options.addRequiredOption("t", "type", true, "client type ('Rx' or 'Tx')");
 		options.addRequiredOption("p", "port", true, "Base port number");
+		options.addRequiredOption("m", "media", true, "Media impl: 'jitsi' or 'ffmpeg'");
 		options.addOption("u", "turnuser", true, "Turn user name");
 		options.addOption("c", "turncredential", true, "Turn password");
 		

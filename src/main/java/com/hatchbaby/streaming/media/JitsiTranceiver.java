@@ -16,7 +16,6 @@
 package com.hatchbaby.streaming.media;
 
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
@@ -59,10 +58,7 @@ public class JitsiTranceiver extends Transceiver
 	 */
 	public JitsiTranceiver(int localPortBase, String remoteHost, int remotePortBase, ClientType clientType) throws UnknownHostException
 	{
-		this.localPortBase = localPortBase;
-		this.remoteAddr = InetAddress.getByName(remoteHost);
-		this.remotePortBase = remotePortBase;
-		this.clientType = clientType;
+		super(localPortBase, remoteHost, remotePortBase, clientType);
 	}
 
 	public void start() throws Exception
