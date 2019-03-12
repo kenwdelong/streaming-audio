@@ -107,7 +107,7 @@ public class Driver
 		{
 			LocalCandidate local = pair.getLocalCandidate();
 			RemoteCandidate remote = pair.getRemoteCandidate();
-			transceiver = new Transceiver(local.getTransportAddress().getPort(),
+			transceiver = Transceiver.create(local.getTransportAddress().getPort(),
 													 remote.getTransportAddress().getAddress().getHostName(),
 													 remote.getTransportAddress().getPort(),
 													 clientType);
