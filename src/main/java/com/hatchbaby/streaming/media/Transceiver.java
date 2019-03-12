@@ -25,7 +25,7 @@ import com.hatchbaby.streaming.model.MediaServer;
 
 public abstract class Transceiver
 {
-	protected static final Logger logger = Logger.getLogger(getClass());
+	protected static final Logger logger = Logger.getLogger(Transceiver.class);
 	
 	/**
 	 * The port which is the source of the transmission i.e. from which the
