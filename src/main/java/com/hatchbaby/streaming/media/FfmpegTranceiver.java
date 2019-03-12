@@ -47,6 +47,7 @@ public class FfmpegTranceiver extends Transceiver
 			ProcessBuilder pb = new ProcessBuilder("cmd", "-c", "ffmpeg.exe", "-re", "/tmp/Eral04.mp3", "-f", "rtsp", "-allowed_media_types", "audio", url);
 			File file = new File("/Users/Ken/java/ffmpeg-4.1-win64-static/bin");
 			pb.directory(file);
+			logger.info("Executing: " + pb.command());
 			process = pb.start();
 
 //			BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -75,6 +76,7 @@ public class FfmpegTranceiver extends Transceiver
 			ProcessBuilder pb = new ProcessBuilder("cmd", "-c", "ffplay.exe", "-f", "rtsp", "-rtsp_flags", "listen", url);
 			File file = new File("/tmp/ffmpeg-20190312-d227ed5-win64-static/bin");
 			pb.directory(file);
+			logger.info("Executing: " + pb.command());
 			process = pb.start();
 
 //			BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
