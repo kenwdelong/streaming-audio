@@ -16,7 +16,7 @@ public class FfmpegTranceiver extends Transceiver
 	{
 		super(localPortBase, remoteHost, remotePortBase, clientType);
 		logger.info("Creating FfmpegTransceiver - " + clientType);
-		properties.load(ClassLoader.getSystemResourceAsStream("application.properties"));
+		properties.load(ClassLoader.getSystemResourceAsStream("streaming.properties"));
 	}
 
 	// This worked locally!
