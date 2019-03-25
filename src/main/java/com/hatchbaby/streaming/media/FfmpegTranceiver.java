@@ -2,18 +2,20 @@ package com.hatchbaby.streaming.media;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.UnknownHostException;
+import java.util.Properties;
 
 import com.hatchbaby.streaming.model.ClientType;
 
 public class FfmpegTranceiver extends Transceiver
 {
 	private Process process;
+	private Properties properties = new Properties();
 
-	public FfmpegTranceiver(int localPortBase, String remoteHost, int remotePortBase, ClientType clientType) throws UnknownHostException
+	public FfmpegTranceiver(int localPortBase, String remoteHost, int remotePortBase, ClientType clientType) throws IOException
 	{
 		super(localPortBase, remoteHost, remotePortBase, clientType);
-		logger.info("Creating FfmpegTransceiver");
+		logger.info("Creating FfmpegTransceiver - " + clientType);
+		properties.load(ClassLoader.getSystemResourceAsStream("application.properties"));
 	}
 
 	// This worked locally!
@@ -44,8 +46,9 @@ public class FfmpegTranceiver extends Transceiver
 			// ffmpeg -re -i /tmp/Earl04.mp3 -f rtsp -allowed_media_types audio -v debug rtsp://127.0.0.1:50000/stream
 			String url = "rtsp://" + remoteAddr.getHostAddress() + ":" + remotePortBase + "/stream";
 			logger.info("Transmitting on url [" + url + "]");
-			ProcessBuilder pb = new ProcessBuilder("cmd", "-c", "ffmpeg.exe", "-re", "/tmp/Eral04.mp3", "-f", "rtsp", "-allowed_media_types", "audio", url);
-			File file = new File("/Users/Ken/java/ffmpeg-4.1-win64-static/bin");
+			String source = properties.getProperty("streaming.source.file");
+			ProcessBuilder pb = new ProcessBuilder("cmd", "-c", "ffmpeg.exe", "-re", source, "-f", "rtsp", "-allowed_media_types", "audio", url);
+			File file = new File(properties.getProperty("streaming.ffmpeg.dir"));
 			pb.directory(file);
 			logger.info("Executing: " + pb.command());
 			process = pb.start();
@@ -74,7 +77,7 @@ public class FfmpegTranceiver extends Transceiver
 			String url = "rtsp://127.0.0.1:" + localPortBase + "/stream";
 			logger.info("Receiving on url [" + url + "]");
 			ProcessBuilder pb = new ProcessBuilder("cmd", "-c", "ffplay.exe", "-f", "rtsp", "-rtsp_flags", "listen", url);
-			File file = new File("/tmp/ffmpeg-20190312-d227ed5-win64-static/bin");
+			File file = new File(properties.getProperty("streaming.ffmpeg.dir"));
 			pb.directory(file);
 			logger.info("Executing: " + pb.command());
 			process = pb.start();
@@ -103,4 +106,18 @@ public class FfmpegTranceiver extends Transceiver
 		}
 	}
 
+	public static void main(String[] args) throws Exception
+	{
+		FfmpegTranceiver tx = new FfmpegTranceiver(5100, "localhost", 5200, ClientType.Tx);
+		FfmpegTranceiver rx = new FfmpegTranceiver(5200, "localhost", 5100, ClientType.Rx);
+		
+		tx.start();
+		rx.start();
+		
+		Thread.sleep(10_000);
+		
+		tx.stop();
+		rx.stop();
+
+	}
 }

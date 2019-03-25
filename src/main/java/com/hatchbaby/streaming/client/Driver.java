@@ -1,6 +1,6 @@
 package com.hatchbaby.streaming.client;
 
-import java.net.UnknownHostException;
+import java.io.IOException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -104,7 +104,7 @@ public class Driver
 		LibJitsi.stop();
 	}
 	
-	private Transceiver createTransceiver(CandidatePair pair, ClientType clientType, MediaServer mediaServer)
+	private Transceiver createTransceiver(CandidatePair pair, ClientType clientType, MediaServer mediaServer) 
 	{
 		Transceiver transceiver = null;
 		try
@@ -117,7 +117,7 @@ public class Driver
 													 clientType,
 													 mediaServer);
 		}
-		catch(UnknownHostException e)
+		catch(IOException e)
 		{
 			e.printStackTrace();
 		}

@@ -15,6 +15,7 @@
  */
 package com.hatchbaby.streaming.media;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -71,10 +72,10 @@ public abstract class Transceiver
 	 * @param remotePortBase
 	 *            the port which is the target of the transmission i.e. to which
 	 *            the media is to be transmitted
-	 * @throws UnknownHostException 
+	 * @throws IOException 
 	 *             
 	 */
-	public static Transceiver create(int localPortBase, String remoteHost, int remotePortBase, ClientType clientType, MediaServer media) throws UnknownHostException
+	public static Transceiver create(int localPortBase, String remoteHost, int remotePortBase, ClientType clientType, MediaServer media) throws IOException
 	{
 		logger.info("Local port base: " + localPortBase);
 		logger.info("Remote host: " + remoteHost);
